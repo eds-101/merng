@@ -1,18 +1,37 @@
-const { ApolloServer } = require('apollo-server');
-const gql = require('graphql-tag');
-const mongoose = require('mongoose');
+const { ApolloServer } = require('apollo-server')
+const gql = require('graphql-tag')
+const mongoose = require('mongoose')
 
+const Post = require('./models/Post')
 const { MONGODB } = require('./config')
 
 const typeDefs = gql`
+  type Post{
+    id: ID!
+    body: String!
+    createdAt: String!
+    username: String!
+  }
+  
   type Query{
-    sayHi: String!
+    getPosts: [Post]
   }
 `
 // each query, mutation or sub has a resolver
 const resolvers = {
   Query: {
-    sayHi: () => 'Hello World!'
+    // Use async in case there are issues with request
+    async getPosts() {
+      try{
+          const posts = await Post.find()
+          return posts
+      }
+      catch(err){
+        throw new Error(err)
+      }
+    }
+
+    // sayHi: () => 'Hello World!'
   }
 }
 
@@ -29,4 +48,4 @@ mongoose.connect(MONGODB, { useNewUrlParser: true })
     return server.listen({ port: 5000 });
   }).then((res) => {
     console.log(`Server running at ${res.url}`)
-  });
+  })
