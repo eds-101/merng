@@ -55,6 +55,7 @@ module.exports = {
         throw new UserInputError('Errors', { errors })
       }
       //toDo: ensure user dont exist already
+      //extend: ensure email is not already in system
       const user = await User.findOne({ username })
       if(user){
         throw new UserInputError('Username is taken', {
